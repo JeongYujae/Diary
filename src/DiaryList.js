@@ -1,8 +1,9 @@
 import React from "react";
 import DiaryItem from './DiaryItem'
 
+//onRemove 함수 받고
 
-const DiaryList= ({diaryList}) =>{
+const DiaryList= ({onEdit,onRemove, diaryList}) =>{
 
     return(
         <div className="DiaryList">
@@ -10,7 +11,8 @@ const DiaryList= ({diaryList}) =>{
             <h4>{diaryList.length}개의 일기가 있습니다</h4>
             <div>
                 {diaryList.map((it)=> (
-                    <DiaryItem key={it.id} {...it}/>
+
+                    <DiaryItem key={it.id} {...it} onEdit={onEdit} onRemove={onRemove}/> //onRemove 함수 내려주고
                 ))}
             </div>
 

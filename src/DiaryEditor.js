@@ -6,18 +6,17 @@ import React,{useRef, useState} from "react";
 
 // 원하는 DOM 요소에 접근하기 : useRef
 
-const DiaryEditor = () =>{
-
-    const authorInput= useRef(); //함수 실행 후 값을 저장
-
-    const contetnInput=useRef();
-
+const DiaryEditor = ({onCreate}) =>{
     const [state,setState]=useState({
         author:"",
         content:"",
         emotion:1,
     })
 
+    const authorInput= useRef(); //함수 실행 후 값을 저장
+    const contetnInput=useRef();
+
+    
     const handleChangeState= (e) =>{
         setState({
             ...state,
@@ -37,8 +36,9 @@ const DiaryEditor = () =>{
             return;
         }
 
+        onCreate(state.author, state.content, state.emotion);
         alert('성공적으로 저장되었습니다')
-    }
+    };
 
 
     return(
