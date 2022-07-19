@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import './App.css';
 import DiaryEditor from './DiaryEditor';
 import DiaryList from './DiaryList';
+import LifeCycle from './LifeCycle';
+import LifeCycle_2 from './LifeCycle_unmount'
 
 
 
@@ -40,6 +42,8 @@ function App() {
 
   return(
     <div className='App'>
+      <LifeCycle/>
+      <LifeCycle_2></LifeCycle_2>
       {/* 상태가 변화하면 재 랜더링 */}
       {/* props로 onCreate 함수를 전달 */}
       <DiaryEditor onCreate={onCreate}/> 
