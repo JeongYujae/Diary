@@ -1,10 +1,16 @@
-import React,{useState} from "react";
+import React,{useRef, useState} from "react";
 
 // 사용자의 입력 처리 : state
 
 //input 값을 state 값으로 받아서 이를 처리해주기
 
+// 원하는 DOM 요소에 접근하기 : useRef
+
 const DiaryEditor = () =>{
+
+    const authorInput= useRef(); //함수 실행 후 값을 저장
+
+    const contetnInput=useRef();
 
     const [state,setState]=useState({
         author:"",
@@ -21,7 +27,16 @@ const DiaryEditor = () =>{
     }
 
     const handleSubmit = () =>{
-        console.log(state);
+        if (state.author.length<1){
+            authorInput.current.focus();
+            return; //return 해주면 -> 더 이상 후속 작업이 실행이 안됨
+        }
+        
+        if (state.content.length<3){
+            contetnInput.current.focus()
+            return;
+        }
+
         alert('성공적으로 저장되었습니다')
     }
 
@@ -31,7 +46,8 @@ const DiaryEditor = () =>{
             <h2> 오늘의 일기</h2>
 
             <div>
-                <input 
+                <input
+                ref={authorInput}
                 name="author"
                 value={state.author}
                 onChange={handleChangeState}
@@ -40,6 +56,7 @@ const DiaryEditor = () =>{
 
             <div>
                 <textarea
+                ref={contetnInput}
                 name="content"
                 value={state.content}
                 onChange={handleChangeState}
