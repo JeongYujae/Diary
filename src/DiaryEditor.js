@@ -1,4 +1,4 @@
-import React,{useRef, useState} from "react";
+import React,{useEffect, useRef, useState} from "react";
 
 // 사용자의 입력 처리 : state
 
@@ -7,6 +7,9 @@ import React,{useRef, useState} from "react";
 // 원하는 DOM 요소에 접근하기 : useRef
 
 const DiaryEditor = ({onCreate}) =>{
+
+    useEffect(()=>console.log('Diary Editor Rendered'))
+
     const [state,setState]=useState({
         author:"",
         content:"",
@@ -84,4 +87,5 @@ const DiaryEditor = ({onCreate}) =>{
     )
 }
 
-export default DiaryEditor;
+
+export default React.memo(DiaryEditor);

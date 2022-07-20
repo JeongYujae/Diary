@@ -95,4 +95,5 @@ const DiaryItem = ({onEdit, onRemove, author, content, created_date, emotion, id
     );
 }
 
-export default DiaryItem;
+// 최적화 1단계
+export default React.memo(DiaryItem);
