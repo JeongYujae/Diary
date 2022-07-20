@@ -1,15 +1,45 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback, useReducer } from 'react';
 import './App.css';
 import DiaryEditor from './DiaryEditor';
 import DiaryList from './DiaryList';
 // import LifeCycle from './LifeCycle';
 // import LifeCycle_2 from './LifeCycle_unmount'
 
+//App 컴포넌트 밖으로 뺴주기
+//state: 상태 변화가 일어나지 직전의 state 값, action: 어떤 상태 변화를 일으켜야 하는지
+const reducer = (state,action) => {
+  switch(action.type){
+    case 'INIT': {
+      return action.data
+      // action에서 데이터를 꺼내서 새로운 state 가 된다
+    }
+    case 'CREATE': {
+      const created_date= new Date().getTime();
+      const newItem={...action.data,created_date}
 
+      return [newItem,...state]
+    }
+    case 'REMOVE': {
+      return state.filter((it)=>it.id!==action.targetId);
+    }
+    case 'EDIT': {
+      //action 으로 targetId 와 newContent를 전달받음
+      return state.map((it)=>it.id === action.targetId ? {...it, content: action.newContent} : it)
+    }
+    default :
+    return state;
+  }
+  
+}
 
 function App() {
 
-  const [data,setData]= useState([]); //일기 리스트니까 초기 값- > [] 빈 배열
+  //Reducer 사용법
+  // const [state값,dispatch] =useReducer(reducer,s)
+  // dispatch => 호출하면 현재 state를 reducer 함수가 자동으로 참조
+  const [data,dispatch]= useReducer(reducer,[])
+
+  // const [data,setData]= useState([]); //일기 리스트니까 초기 값- > [] 빈 배열
 
   const dataId = useRef(1);
 
@@ -28,8 +58,11 @@ function App() {
         id: dataId.current++
       }
     })
+    //setData 를 reducer로 다룬다면?
+    // setData(initData)
 
-    setData(initData)
+    //타입은 init, action에 필요한 data는 initData 라며 dispatch
+    dispatch({type:'INIT',data:initData})
 
   }
 
@@ -46,30 +79,43 @@ function App() {
   //문제: [] 빈 인자로 계속 전달을 해서 -> 일기 리스트가 지속이 안됨
 
   const onCreate = useCallback((author, content, emotion) => {
-    const created_date= new Date().getTime();
-    const newItem = {
-      author,
-      content,
-      emotion,created_date,
-      id: dataId.current
-    };
+
+    dispatch({type:'CREATE',data:{author, content, emotion, id:dataId.current}})
+
+
+    // const created_date= new Date().getTime();
+    // const newItem = {
+    //   author,
+    //   content,
+    //   emotion,created_date,
+    //   id: dataId.current
+    // };
 
     dataId.current+=1;
     //함수인자로 콜백 함수를 전달하여 해결
-    setData((data)=>[newItem, ...data])
+    // setData((data)=>[newItem, ...data])
+
+
   },[]);
 
   
   const onRemove = useCallback((targetId) =>{
-    setData(data => data.filter((it)=>it.id!==targetId));  
+
+    dispatch({type:'REMOVE', targetId})
+
+    // setData(data => data.filter((it)=>it.id!==targetId));  
     // 인자 부분, 최신의 data 를 전달
   },[]);
 
   const onEdit = useCallback((targetId,newContent) => {
-    setData((data)=>
-      data.map((it)=>
-        it.id===targetId ? {...it, content:newContent} : it)
-    )
+
+    // type과 targetId, newContent를 action으로 올려보냄
+    dispatch({type:'EDIT',targetId,newContent})
+    
+    // setData((data)=>
+    //   data.map((it)=>
+    //     it.id===targetId ? {...it, content:newContent} : it)
+    // )
 
   },[]);
 
