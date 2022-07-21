@@ -1,6 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useContext } from "react";
+import { DiaryDispatchContext } from "./App";
 
-const DiaryItem = ({onEdit, onRemove, author, content, created_date, emotion, id}) => {
+
+const DiaryItem = ({author, content, created_date, emotion, id}) => {
+
+    const {onEdit,onRemove}= useContext(DiaryDispatchContext)
+
 
     // true => 수정 중인 기능 수행, false => 일상적인 페이지 보여줌 (true 일 때 수정 가능하게 할거야)
     const [isEdit, setIsEdit]=useState(false);
@@ -95,5 +100,5 @@ const DiaryItem = ({onEdit, onRemove, author, content, created_date, emotion, id
     );
 }
 
-// 최적화 1단계
+// 최적화 1단계 React.memo 로 묶어주기
 export default React.memo(DiaryItem);

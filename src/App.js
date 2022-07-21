@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect, useMemo, useCallback, useReducer } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback, useReducer } from 'react';
 import './App.css';
 import DiaryEditor from './DiaryEditor';
 import DiaryList from './DiaryList';
-// import LifeCycle from './LifeCycle';
-// import LifeCycle_2 from './LifeCycle_unmount'
+
 
 //App 컴포넌트 밖으로 뺴주기
 //state: 상태 변화가 일어나지 직전의 state 값, action: 어떤 상태 변화를 일으켜야 하는지
@@ -30,7 +29,13 @@ const reducer = (state,action) => {
     return state;
   }
   
-}
+};
+
+
+//Context value를 통해서 값을 전달함(-> return부분에서)
+export const DiaryStateContext= React.createContext();
+
+export const DiaryDispatchContext = React.createContext();
 
 function App() {
 
@@ -58,6 +63,7 @@ function App() {
         id: dataId.current++
       }
     })
+    
     //setData 를 reducer로 다룬다면?
     // setData(initData)
 
@@ -119,6 +125,11 @@ function App() {
 
   },[]);
 
+  //useMemo 쓰는 이유 -> App이 재생성되면, dispatch 요소들도 재생성 되기 때문에, 또 랜더링을 방지하기 위함
+  const memoizedDispatches = useMemo(()=>{
+    return {onCreate, onRemove, onEdit}
+  })
+
   //useMemo로 감싸주면 return 값을 최적화 하는데 도움을 준다
   //[] 가 변화할때만 새롭게 계산해서 반환한다 ([] 값 변화가 없다면 그대로 return 한다)
   //함수가 아니라 값으로 사용해야함
@@ -132,16 +143,20 @@ function App() {
   const {goodCount, badCount, goodRatio} = getDiaryAnalysis;
 
   return(
-    <div className='App'>
-      {/* 상태가 변화하면 재 랜더링 */}
-      {/* props로 onCreate 함수를 전달 */}
-      <DiaryEditor onCreate={onCreate}/> 
-      <div>좋아좋아:{goodCount}</div>
-      <div>싫어싫어:{badCount}</div>
-      <div>좋아비율:{goodRatio}%</div>
-      <DiaryList onEdit={onEdit}onRemove={onRemove} diaryList={data}/>  {/* props 값으로 data 전달*/}
-      
-    </div>
+    <DiaryStateContext.Provider value={data}>
+      <DiaryDispatchContext.Provider value={memoizedDispatches}>
+
+      <div className='App'>
+        {/* 상태가 변화하면 재 랜더링 */}
+        {/* props로 onCreate 함수를 전달 */}
+        <DiaryEditor onCreate={onCreate}/> 
+        <div>좋아좋아:{goodCount}</div>
+        <div>싫어싫어:{badCount}</div>
+        <div>좋아비율:{goodRatio}%</div>
+        <DiaryList onEdit={onEdit}onRemove={onRemove} diaryList={data}/>  {/* props 값으로 data 전달*/}
+      </div>  
+      </DiaryDispatchContext.Provider>
+    </DiaryStateContext.Provider>
   )
 }
 

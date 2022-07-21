@@ -1,4 +1,5 @@
-import React,{useEffect, useRef, useState} from "react";
+import React,{useContext, useEffect, useRef, useState} from "react";
+import { DiaryDispatchContext } from "./App";
 
 // 사용자의 입력 처리 : state
 
@@ -6,10 +7,10 @@ import React,{useEffect, useRef, useState} from "react";
 
 // 원하는 DOM 요소에 접근하기 : useRef
 
-const DiaryEditor = ({onCreate}) =>{
-
-    useEffect(()=>console.log('Diary Editor Rendered'))
-
+const DiaryEditor = () =>{
+    
+    const {onCreate}= useContext(DiaryDispatchContext)
+    
     const [state,setState]=useState({
         author:"",
         content:"",
